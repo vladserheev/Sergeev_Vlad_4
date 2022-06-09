@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using System.Collections;
 
 namespace laba4
 {
@@ -10,18 +11,31 @@ namespace laba4
             public string Name { get; set; }
             public int Age { get; set; }
             public bool IsFlyable { get; set; }
-
+            public int weight { get; set; }
             public abstract void Move();
         }
 
-        class Eagle : Bird
+        abstract class FlyableBird : Bird
         {
-            public int MaxHeight;
-            public Eagle(string name,int age, bool isFlyable, int maxHeght)
+            public bool IsFlyable = true;
+            public int MaxHeight { get; set; }
+        }
+
+        abstract class NonFlyableBird : Bird
+        {
+            public bool IsFlyable =false;
+            public int MaxSpeed { get; set; }
+        }
+
+
+
+
+        class Eagle : FlyableBird
+        {
+            public Eagle(string name,int age, int maxHeght)
             {
                 Name=name;
                 Age=age;
-                IsFlyable=isFlyable;
                 MaxHeight=maxHeght;
             }
             public override void Move()
@@ -31,14 +45,12 @@ namespace laba4
 
         }
 
-        class Parrot : Bird
+        class Parrot : FlyableBird
         {
-            public int MaxHeight;
-            public Parrot(string name, int age, bool isFlyable, int maxHeght)
+            public Parrot(string name, int age, int maxHeght)
             {
                 Name = name;
                 Age = age;
-                IsFlyable = isFlyable;
                 MaxHeight = maxHeght;
             }
             public override void Move()
@@ -48,14 +60,12 @@ namespace laba4
 
         }
 
-        class NonFlyableBird : Bird
+        class Ostrich : NonFlyableBird
         {
-            public int MaxSpeed;
-            public NonFlyableBird(string name, int age, bool isFlyable, int maxSpeed)
+            public Ostrich(string name, int age, int maxSpeed)
             {
                 Name = name;
                 Age = age;
-                IsFlyable = isFlyable;
                 MaxSpeed = maxSpeed;
             }
             public override void Move()
@@ -64,14 +74,11 @@ namespace laba4
             }
 
         }
-        class Ostrich : Bird
+        class Penguin : NonFlyableBird
         {
-            public int MaxSpeed;
-            public Ostrich(string name, int age, bool isFlyable, int maxSpeed)
+            public Penguin(string name, int age, int maxSpeed)
             {
-                Name = name;
                 Age = age;
-                IsFlyable = isFlyable;
                 MaxSpeed = maxSpeed;
             }
             public override void Move()
@@ -80,37 +87,60 @@ namespace laba4
             }
 
         }
-        class Penguin : Bird
+        
+        class Zoo
         {
-            public int MaxSpeed;
-            public Penguin(string name, int age, bool isFlyable, int maxSpeed)
+            ArrayList Animals = new ArrayList();
+
+            public Zoo()
             {
-                Name = name;
-                Age = age;
-                IsFlyable = isFlyable;
-                MaxSpeed = maxSpeed;
-            }
-            public override void Move()
-            {
-                Console.WriteLine($" {Name} віком {Age}р може бігти зі швидкістю: {MaxSpeed}(км/год)");
+               
             }
 
+            public void AddBird(Bird bird)
+            {
+                Animals.Add(bird);
+            }
+
+            public double GetAvarageWeight(Bird bird)
+            {
+
+                double sum=0;
+                int count=0;
+                foreach (Bird item in Animals)
+                {
+                    if(item.GetType().Name == bird.GetType().Name)
+                    {
+                        sum += item.Age;
+                        count++;
+                    }
+                }
+                return sum/count;
+             
+            }
         }
         static void Main(string[] args)
         {
             Console.OutputEncoding = UTF8Encoding.UTF8;
 
-            Parrot parrot = new Parrot("Папуга", 1, true, 250);
-            Eagle eagle = new Eagle("Орел",5, true, 400);
-            NonFlyableBird chik = new NonFlyableBird("Птах", 3, false, 45);
-            Ostrich ostrich = new Ostrich("Страус", 10, false, 20);
-            Penguin penguin = new Penguin("Пінгвін", 6, false, 15);
+            Parrot parrot = new Parrot("Папуга", 1, 250);
+            Parrot parrot1 = new Parrot("Папуга1", 2, 250);
+            Parrot parrot2 = new Parrot("Папуга2", 6, 250);
+            Parrot parrot3 = new Parrot("Папуга3", 8, 250);
+
+            Eagle eagle = new Eagle("Орел",5, 400);
+            Ostrich ostrich = new Ostrich("Страус", 10, 20);
+            Penguin penguin = new Penguin("Пінгвін", 6, 15);
             
-            Bird[] birds = {parrot, eagle, chik, ostrich, penguin};
-            foreach(Bird bird in birds)
-            {
-                bird.Move();
-            }
+            Zoo zoo = new Zoo();
+
+            zoo.AddBird(parrot);
+            zoo.AddBird(parrot1);
+            zoo.AddBird(eagle);
+            zoo.AddBird(ostrich);
+            zoo.AddBird(penguin);
+
+            Console.WriteLine($"Середній вік {parrot1.GetType().Name}: {zoo.GetAvarageWeight(parrot1)}");
         }
     }
 }
